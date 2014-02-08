@@ -40,32 +40,33 @@ def main(argv):
     for n in names:
         trakt.tv.setup(apikey='a115a168132e06e8b05ab9a58790390d',username=trakt_user,password=trakt_pass)
         #t = trakt.tv.show.season('the-walking-dead',3)
-        print n
+        print "Show: " + n
         if '(' in n:
             n = n.replace("(","")
             n = n.replace(")","")
-            print n
         elif '.' in n:
             n = n.replace(".","")
-            print n
         elif '\'' in n:
             n = n.replace("'","")
-            print n
         elif '!' in n:
             n = n.replace("!","")
-            print n
         elif '&' in n:
             n = n.replace("&","")
-            print n
-        t = trakt.tv.show.season(n.replace(" ", "-"),1)
-        x = json.dumps(t,ensure_ascii=False)
-        y = json.loads(x)
+        seas = trakt.tv.show.seasons(n.replace(" ", "-"))
+        seas_j = json.dumps(seas,ensure_ascii=False)
+        seas_jload = json.loads(seas_j)
+        seasons = int(seas_jload[0]['season'])
+        for i in range(1,seasons+1):
+            print i
+            t = trakt.tv.show.season(n.replace(" ", "-"),str(i))
+            x = json.dumps(t,ensure_ascii=False)
+            y = json.loads(x)
         #print y
-        for c in y:
+            for c in y:
         #pprint(c)
         #print c['episode']
             #print c['in_collection']
-            print c['tvdb_id']
+                print c['tvdb_id']
 
 if __name__ == "__main__":
     main(sys.argv[1:])
