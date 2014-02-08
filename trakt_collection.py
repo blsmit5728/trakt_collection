@@ -6,6 +6,18 @@ import sys
 import getopt
 import os
 
+def usage(status):
+    print "Usage: ./trakt_collection -a<api_key> -u<user> -p<password> -d<directory> (-f<filename>)"
+    print "       -a : trakt api key "
+    print "       -d : directory containing folders of Show names"
+    print "       -f : output file for listing of missing episodes default: default_out_file.txt"
+    print "       -p : trakt password in plain text"
+    print "       -u : trakt username"
+    if(status):
+        exit(1)
+    else:
+        exit(0)
+
 def sanitize_for_trakt(series_name):
     if '(' in series_name:
         series_name = series_name.replace("(","")
@@ -27,9 +39,9 @@ def main(argv):
     trakt_pass = ""
     search_dir = ""
     trakt_api_key = ""
-    grammar = "kant.xml"                 
+    output_file = "default_out_file.txt"
     try:                                
-        opts, args = getopt.getopt(argv, "a:d:u:p:", ["api_key=","dir=", "username=", "password="]) 
+        opts, args = getopt.getopt(argv, "a:d:f:hp:u:", ["help","api_key=","dir=", "username=", "password=","filename="]) 
     except getopt.GetoptError:           
         sys.exit(2)
     for opt, arg in opts:
@@ -41,6 +53,25 @@ def main(argv):
             trakt_pass = arg
         elif opt in ("-a","--api","--api_key"):
             trakt_api_key = arg
+        elif opt in ("-f","--filename"):
+            output_file = arg
+        elif opt in ("-h","--help"):
+            usage(0)
+
+    if trakt_user is "":
+        print "Error: You need to enter a username for trakt"
+        usage(1)
+    if trakt_pass is "":
+        print "Error: You need to enter a password for trakt"
+        usage(1)
+    if trakt_api_key is "":
+        print "Error: You need to enter a trakt api key"
+        usage(1)
+    try:
+        f_handle = open(output_file,"w")
+    except IOError:
+        print "Error opening the output file, check permissions, etc..."
+        exit(2)
 
     names = os.listdir(search_dir)
     for n in names:
@@ -59,8 +90,13 @@ def main(argv):
                 x = json.dumps(t,ensure_ascii=False)
                 y = json.loads(x)
                 for c in y:
-                    if "Brooklyn" in n:
-                        print c
+                    if c['in_collection'] is False:
+                        #print "Is " + str(n) + " [S" + str(c['season']) + "E" + str(c['episode']) +  "] in your collection? " + str(c['in_collection'])
+                        season_num = "%02d" % c['season']
+                        episode_num = "%02d" % c['episode']
+                        ep_id = "S" + season_num + "E" + episode_num
+                        wo = str(n) + " " + str(ep_id) + "\n"
+                        f_handle.write(wo)
                     print "Is " + str(n) + " [S" + str(c['season']) + "E" + str(c['episode']) +  "] in your collection? " + str(c['in_collection'])
 
 if __name__ == "__main__":
