@@ -6,6 +6,8 @@ import sys
 import getopt
 import os
 
+shows = [] 
+
 def usage(status):
     print "Usage: ./trakt_collection -a<api_key> -u<user> -p<password> -d<directory> (-f<filename>)"
     print "       -a : trakt api key "
@@ -73,6 +75,25 @@ def main(argv):
         print "Error opening the output file, check permissions, etc..."
         exit(2)
 
+    trakt.tv.setup(apikey=trakt_api_key,username=trakt_user,password=trakt_pass)
+    c = trakt.tv.Search.movies('godzilla')
+    p = trakt.tv.List.add(name="testt",privacy="public",desc="asjkldfh",show_numbers="true",allow_shouts="false")
+    print p
+    print c
+    '''
+    c = trakt.tv.User.lists()
+    print c
+    b = trakt.tv.User.list(list_name='tvshows')
+    ljson = json.dumps(b, ensure_ascii=False)
+    ljsonload = json.loads(ljson)
+    for i in range(0,55):
+        #print ljsonload['items'][i]['show']['title']
+        shows.append(ljsonload['items'][i]['show']['title'])
+    shows_sort =  sorted(shows)
+    for i in range(0,55):
+        print shows_sort[i]
+    '''
+    exit(0)
     names = os.listdir(search_dir)
     for n in names:
         trakt.tv.setup(apikey=trakt_api_key,username=trakt_user,password=trakt_pass)
