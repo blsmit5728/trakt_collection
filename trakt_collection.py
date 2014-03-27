@@ -76,11 +76,41 @@ def main(argv):
         exit(2)
 
     trakt.tv.setup(apikey=trakt_api_key,username=trakt_user,password=trakt_pass)
-    c = trakt.tv.Search.movies('godzilla')
+    '''
     p = trakt.tv.List.add(name="testt",privacy="public",desc="asjkldfh",show_numbers="true",allow_shouts="false")
     print p
-    print c
-    '''
+
+    f = open('movie-queue.txt','r')
+    item_list = []
+
+    for line in f:
+        s = str(line)
+        t = s.rstrip('\n')
+        u = t.replace(" ", "")
+        v = u.split(',')
+        item = {'type':'movie','imdb_id':str(v[0]),'title':str(v[1])} 
+        item_list.append(item)
+
+    q = trakt.tv.List.item_add(name="testt", items=item_list)
+    print q
+
+    print item_list
+    
+    trakt.tv.setup(apikey=trakt_api_key,username=trakt_user,password=trakt_pass)
+    p = trakt.tv.List.add(name="testt",privacy="public",desc="asjkldfh",show_numbers="true",allow_shouts="false")
+    print p
+
+    items = [ {'type':'movie','imdb_id':'tt0372784'} ]
+    q = trakt.tv.List.item_add(name="testt", items=items)
+    print q
+    
+    items = [ {'type':'movie','imdb_id':'tt0372784'} ]
+    q = trakt.tv.List.item_delete(name="testt", items=items)
+    print q
+
+    q = trakt.tv.List.delete(name="testt")
+    print q
+    
     c = trakt.tv.User.lists()
     print c
     b = trakt.tv.User.list(list_name='tvshows')
