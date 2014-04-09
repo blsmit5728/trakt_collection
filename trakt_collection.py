@@ -8,6 +8,38 @@ import os
 
 shows = [] 
 
+def list_test():
+    trakt.tv.List.add(name="testt",privacy="public",desc="asjkldfh",show_numbers="true",allow_shouts="false")
+    items = [ {'type':'movie','imdb_id':'tt0372784'} ]
+    trakt.tv.List.item_add(name="testt", items=items)
+    items = [ {'type':'movie','imdb_id':'tt0372784'} ]
+    trakt.tv.List.item_delete(name="testt", items=items)
+    c = trakt.tv.User.lists("blsmit5728")
+    print c
+    c = trakt.tv.User.list("blsmit5728", "testt")
+    print c
+    trakt.tv.List.delete(name="testt")
+    c = trakt.tv.User.lists("blsmit5728")
+    print c
+
+def movies_collected():
+    movies = trakt.tv.User.movies_collected("blsmit5728")
+    #print movies
+    ljson = json.dumps(movies, ensure_ascii=False)
+    ljsonload = json.loads(ljson)
+    #print ljsonload
+    for titles in ljsonload:
+        print titles['title']
+
+def shows_collected():
+    shows = trakt.tv.User.shows_collected("blsmit5728")
+    #print movies
+    ljson = json.dumps(shows, ensure_ascii=False)
+    ljsonload = json.loads(ljson)
+    #print ljsonload
+    for titles in ljsonload:
+        print titles['title']
+
 def usage(status):
     print "Usage: ./trakt_collection -a<api_key> -u<user> -p<password> -d<directory> (-f<filename>)"
     print "       -a : trakt api key "
@@ -41,9 +73,10 @@ def main(argv):
     trakt_pass = ""
     search_dir = ""
     trakt_api_key = ""
+    tst = ""
     output_file = "default_out_file.txt"
     try:                                
-        opts, args = getopt.getopt(argv, "a:d:f:hp:u:", ["help","api_key=","dir=", "username=", "password=","filename="]) 
+        opts, args = getopt.getopt(argv, "a:d:f:hp:t:u:", ["help","api_key=","dir=", "username=", "password=","filename=","test="]) 
     except getopt.GetoptError:           
         sys.exit(2)
     for opt, arg in opts:
@@ -59,6 +92,8 @@ def main(argv):
             output_file = arg
         elif opt in ("-h","--help"):
             usage(0)
+        elif opt in ("-t","--test"):
+            tst = arg
 
     if trakt_user is "":
         print "Error: You need to enter a username for trakt"
@@ -76,43 +111,22 @@ def main(argv):
         exit(2)
 
     trakt.tv.setup(apikey=trakt_api_key,username=trakt_user,password=trakt_pass)
+
+    if tst == "":
+        print "Please enter a test number"
+    elif tst == "1":
+        p = trakt.tv.Activity.user()
+        print p
+    elif tst == "2":
+        list_test()
+    elif tst == "3":
+        movies_collected()
+    elif tst == "4":
+        shows_collected()
+
+
+    exit(0)
     '''
-    p = trakt.tv.List.add(name="testt",privacy="public",desc="asjkldfh",show_numbers="true",allow_shouts="false")
-    print p
-
-    f = open('movie-queue.txt','r')
-    item_list = []
-
-    for line in f:
-        s = str(line)
-        t = s.rstrip('\n')
-        u = t.replace(" ", "")
-        v = u.split(',')
-        item = {'type':'movie','imdb_id':str(v[0]),'title':str(v[1])} 
-        item_list.append(item)
-
-    q = trakt.tv.List.item_add(name="testt", items=item_list)
-    print q
-
-    print item_list
-    
-    trakt.tv.setup(apikey=trakt_api_key,username=trakt_user,password=trakt_pass)
-    p = trakt.tv.List.add(name="testt",privacy="public",desc="asjkldfh",show_numbers="true",allow_shouts="false")
-    print p
-
-    items = [ {'type':'movie','imdb_id':'tt0372784'} ]
-    q = trakt.tv.List.item_add(name="testt", items=items)
-    print q
-    
-    items = [ {'type':'movie','imdb_id':'tt0372784'} ]
-    q = trakt.tv.List.item_delete(name="testt", items=items)
-    print q
-
-    q = trakt.tv.List.delete(name="testt")
-    print q
-    
-    c = trakt.tv.User.lists()
-    print c
     b = trakt.tv.User.list(list_name='tvshows')
     ljson = json.dumps(b, ensure_ascii=False)
     ljsonload = json.loads(ljson)
@@ -123,7 +137,6 @@ def main(argv):
     for i in range(0,55):
         print shows_sort[i]
     '''
-    exit(0)
     names = os.listdir(search_dir)
     for n in names:
         trakt.tv.setup(apikey=trakt_api_key,username=trakt_user,password=trakt_pass)
@@ -152,3 +165,5 @@ def main(argv):
 
 if __name__ == "__main__":
     main(sys.argv[1:])
+
+
