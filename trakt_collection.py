@@ -5,32 +5,73 @@ from pprint import pprint
 import sys
 import getopt
 import os
+#from unidecode import unidecode
+
 
 shows = [] 
 
 def list_test():
-    trakt.tv.List.add(name="testt",privacy="public",desc="asjkldfh",show_numbers="true",allow_shouts="false")
-    items = [ {'type':'movie','imdb_id':'tt0372784'} ]
-    trakt.tv.List.item_add(name="testt", items=items)
-    items = [ {'type':'movie','imdb_id':'tt0372784'} ]
-    trakt.tv.List.item_delete(name="testt", items=items)
+    #trakt.tv.List.add(name="testt",privacy="public",desc="asjkldfh",show_numbers="true",allow_shouts="false")
+    #items = [ {'type':'movie','imdb_id':'tt0372784'} ]
+    #trakt.tv.List.item_add(name="testt", items=items)
+    #items = [ {'type':'movie','imdb_id':'tt0372784'} ]
+    #trakt.tv.List.item_delete(name="testt", items=items)
     c = trakt.tv.User.lists("blsmit5728")
     print c
-    c = trakt.tv.User.list("blsmit5728", "testt")
-    print c
-    trakt.tv.List.delete(name="testt")
-    c = trakt.tv.User.lists("blsmit5728")
-    print c
+    #c = trakt.tv.User.list("blsmit5728", "testt")
+    #print c
+    #trakt.tv.List.delete(name="testt")
+    #c = trakt.tv.User.lists("blsmit5728")
+    #print c
+
+def get_tv_shows():
+    l = []
+    # Get the main tv Shows
+    c = trakt.tv.User.list("blsmit5728", "tvshows")
+    a = json.dumps(c, ensure_ascii=False)
+    b = json.loads(a)
+    for titles in b['items']:
+        l.append(titles['show']['title'])
+    # Get the reality Shows
+    c = trakt.tv.User.list("blsmit5728", "realitytv")
+    a = json.dumps(c, ensure_ascii=False)
+    b = json.loads(a)
+    for titles in b['items']:
+        l.append(titles['show']['title'])
+
+    #print them all out
+    l = sorted(l)
+    for x in l:
+        print x
+
 
 def movies_collected():
     movies = trakt.tv.User.movies_collected("blsmit5728")
+    movies_qu =  trakt.tv.User.list("blsmit5728", "moviequeue")
+    #print movies_qu
+    a = json.dumps(movies_qu, ensure_ascii=False)
+    #print a
+    b = json.loads(a)
+    for titles in b['items']:
+        print titles
+#        name = titles['items']
+#        collected = titles['in_collection']
+#        collected = str(collected)
+#        if collected is "True":
+#            print name + " is in the collection"
+    '''
     #print movies
     ljson = json.dumps(movies, ensure_ascii=False)
     ljsonload = json.loads(ljson)
     #print ljsonload
     for titles in ljsonload:
-        print titles['title']
-
+        #print titles['title'], titles['year']
+        #name = unidecode(titles['title'])
+        name = titles['title']
+        year = str(titles['year'])
+        name = name.replace(":", "")
+        print name + "(" + year + ")"
+'''
 def shows_collected():
     shows = trakt.tv.User.shows_collected("blsmit5728")
     #print movies
@@ -38,7 +79,7 @@ def shows_collected():
     ljsonload = json.loads(ljson)
     #print ljsonload
     for titles in ljsonload:
-        print titles['title']
+        print titles['title'], titles['year']
 
 def usage(status):
     print "Usage: ./trakt_collection -a<api_key> -u<user> -p<password> -d<directory> (-f<filename>)"
@@ -123,6 +164,8 @@ def main(argv):
         movies_collected()
     elif tst == "4":
         shows_collected()
+    elif tst == "5":
+        get_tv_shows()
 
 
     exit(0)
