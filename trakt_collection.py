@@ -27,22 +27,44 @@ def list_test():
 def get_tv_shows():
     l = []
     # Get the main tv Shows
+#    c = trakt.tv.User.list("blsmit5728", "tvshows")
+#    a = json.dumps(c, ensure_ascii=False)
+#    b = json.loads(a)
+#    for titles in b['items']:
+#        l.append(titles['show']['title'])
+
+    # Get the reality Shows
+#    c = trakt.tv.User.list("blsmit5728", "realitytv")
+#    a = json.dumps(c, ensure_ascii=False)
+#    b = json.loads(a)
+#    for titles in b['items']:
+#        l.append(titles['show']['title'])
+
+    # Get the reality Shows
+#    c = trakt.tv.User.list("blsmit5728", "interesting")
+#    a = json.dumps(c, ensure_ascii=False)
+#    b = json.loads(a)
+#    for titles in b['items']:
+#        l.append(titles['show']['title'])
+
+    # Get the reality Shows
+#    c = trakt.tv.User.list("blsmit5728", "laura")
+#    a = json.dumps(c, ensure_ascii=False)
+#    b = json.loads(a)
+#    for titles in b['items']:
+#        l.append(titles['show']['title'])
+
+    #print them all out
+#    l = sorted(l)
+#    for x in l:
+#        print x
+
     c = trakt.tv.User.list("blsmit5728", "tvshows")
     a = json.dumps(c, ensure_ascii=False)
     b = json.loads(a)
     for titles in b['items']:
-        l.append(titles['show']['title'])
-    # Get the reality Shows
-    c = trakt.tv.User.list("blsmit5728", "realitytv")
-    a = json.dumps(c, ensure_ascii=False)
-    b = json.loads(a)
-    for titles in b['items']:
-        l.append(titles['show']['title'])
-
-    #print them all out
-    l = sorted(l)
-    for x in l:
-        print x
+        print titles['show']['title']
+        print titles['show']['images']['poster']
 
 
 def movies_collected():
